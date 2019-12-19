@@ -1,0 +1,79 @@
+name: UploadReleaseAssetsLinux
+on:
+  release:
+    types:
+      - created
+jobs:
+  CreateAdnPushUnixExecutable:
+    name: CreateAdnPushUnixExecutable
+    strategy:
+      matrix:
+        go: [ 1.13]
+        goarch: [ amd64 ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up GoLang Environment
+        uses: actions/setup-go@v1
+        with:
+          go-version: ${{ matrix.go }}
+        id: go
+      - name: Checkout code into the GOPATH
+        uses: actions/checkout@v1
+        with:
+          fetch-depth: 1
+          path: go/src/github.com/gallo-cedrone/${{ github.event.repository.name }}
+      - name: Install dependencies
+        run: |
+          sudo apt-get install rpm ruby ruby-dev rubygems build-essential
+          sudo gem install --no-document fpm
+      - name: Build and create packages        
+        env:
+          GOPATH: /home/runner/work/${{ github.event.repository.name }}/go
+          GOBIN: /home/runner/work/${{ github.event.repository.name }}/go/bin
+          VERSION: ${{ github.event.release.tag_name }}
+          RELEASE: ${{ github.event.release.target_commitish }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          echo ${{ github.event.repository.name }} | IFS=- read nri INTEGRATION the_rest
+          export PATH=$PATH:$GOBIN
+          make build
+          make package
+      - name: Upload Release Asset Binary
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/bin/linux_${{ matrix.goarch }}/${{ github.event.repository.name }}
+          asset_name: ${{ github.event.repository.name }}
+          asset_content_type: binary
+
+      - name: Upload Release Asset RPM
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/packages/rpm/${{ github.event.repository.name }}-${{ github.event.release.tag_name }}-${{ github.event.release.target_commitish }}.x86_64.rpm
+          asset_name: ${{ github.event.repository.name }}-${{ github.event.release.tag_name }}-${{ github.event.release.target_commitish }}.x86_64.rpm
+          asset_content_type: rpm
+
+      - name: Upload Release Asset DEB
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/packages/deb/${{ github.event.repository.name }}_${{ github.event.release.tag_name }}-${{ github.event.release.target_commitish }}_${{ matrix.GOARCH }}.deb
+          asset_name: ${{ github.event.repository.name }}_${{ github.event.release.tag_name }}-${{ github.event.release.target_commitish }}_${{ matrix.GOARCH }}.deb
+          asset_content_type: deb
+
+      - name: Upload Release Asset Tarball
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ github.event.release.upload_url }}
+          asset_path: ./target/packages/tarball/${{ github.event.repository.name }}_linux_${{ github.event.release.tag_name }}_${{ matrix.GOARCH }}.tar.gz
+          asset_name: ${{ github.event.repository.name }}_linux_${{ github.event.release.tag_name }}_${{ matrix.GOARCH }}.tar.gz
+          asset_content_type: tar

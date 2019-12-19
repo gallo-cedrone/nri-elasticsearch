@@ -1,20 +1,42 @@
+<#
+    .SYNOPSIS
+        This script performs the needed replacement of the placeholders in  Product.wxs and versioninfo.json
+#>
 param (
-	 [int]$major = $(throw "-major is required"),
-	 [int]$minor = $(throw "-minor is required"),
-	 [int]$patch = $(throw "-patch is required"),
-	 [int]$build = 0
+	# IntegrationName
+    [string]$integration = $(throw "-integration is required"),
+	[string]$version="0.0.0",
+	[int]$build = 0
 )
+echo "--- This script performs the needed replacement of the placeholders in  Product.wxs and versioninfo.json"
 
-$integration = $(Split-Path -Leaf $PSScriptRoot)
+# verifying version number format
+$v = $version.Split(".")
+
+if ($v.Length -ne 3) {
+    echo "-version must follow a numeric major.minor.patch semantic versioning schema (received: $version)"
+    exit -1
+}
+
+$wrong = $v | ? { (-Not [System.Int32]::TryParse($_, [ref]0)) -or ( $_.Length -eq 0) -or ([int]$_ -lt 0)} | % { 1 }
+if ($wrong.Length  -ne 0) {
+    echo "-version major, minor and patch must be valid positive integers (received: $version)"
+    exit -1
+}
+$major = $v[0]
+$minor = $v[1]
+$patch = $v[2]
 $integrationName = $integration.Replace("nri-", "")
 $executable = "nri-$integrationName.exe"
 
 if (-not (Test-Path env:GOPATH)) {
 	Write-Error "GOPATH not defined."
 }
-$projectRootPath = Join-Path -Path $env:GOPATH -ChildPath "src\github.com\newrelic\$integration"
+$projectRootPath = Join-Path -Path $env:GOPATH -ChildPath "src\github.com\gallo-cedrone\$integration"
+echo "--- projectRootPath=$projectRootPath"
 
 $versionInfoTempl = Get-Childitem -Path $projectRootPath -Include "versioninfo.json.template" -Recurse -ErrorAction SilentlyContinue
+echo "--- versionInfoTempl=$versionInfoTempl"
 if ("$versionInfoTempl" -eq "") {
 	Write-Error "$versionInfoTempl not found."
 	exit 0
