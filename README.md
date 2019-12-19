@@ -1,3 +1,5 @@
+[![Known Vulnerabilities](https://snyk.io/test/github/gallo-cedrone/nri-elasticsearch/badge.svg)]
+
 # New Relic Infrastructure Integration for elasticsearch
 
 The New Relic Infrastructure Integration for Elasticsearch captures critical performance metrics and inventory reported by Elasticsearch clusters. Data on the cluster, nodes, shards, and indices is collected.
