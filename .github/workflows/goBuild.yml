@@ -1,0 +1,232 @@
+name: Go
+on: 
+  push:
+    tags:
+    - '*'
+jobs:
+  BuildAndTestWindows:
+    name: BuildWindows
+    strategy:
+      matrix:
+        go: [1.13]
+    runs-on: windows-latest
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: go/src/github.com/gallo-cedrone/nri-elasticsearch
+    - name: Build and test
+      shell: bash
+      run: |
+        pwd
+        export GOPATH=/d/a/nri-elasticsearch/go
+        export GOBIN=/d/a/nri-elasticsearch/go/bin
+        go test ./src/
+  BuildAndTestLinux:
+    name: BuildLinux
+    strategy:
+      matrix:
+        go: [ 1.13]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: go/src/github.com/gallo-cedrone/nri-elasticsearch
+    - name: Installing go-cov
+      run: go get github.com/jstemmer/go-junit-report github.com/axw/gocov/gocov/... github.com/AlekSi/gocov-xml
+    - name: Build and test
+      env:
+        GOPATH: /home/runner/work/nri-elasticsearch/go
+        GOBIN: /home/runner/work/nri-elasticsearch/go/bin
+      run: |
+        export PATH=$PATH:$GOBIN
+        make clean validate test 
+
+###CREATING A RELEASE ONLY IF WINDOWS AND LINUX TESTS HAVE SUCCEED###
+
+  CreateRelease:
+    name: CreateRelease
+    needs: [BuildAndTestLinux, BuildAndTestWindows]
+    container: golang:${{ matrix.go }}-stretch 
+    strategy:
+      matrix:
+        go: [1.13]
+    runs-on: ubuntu-latest
+    steps:
+    - name: CreateRelease
+      uses: actions/create-release@v1.0.0
+      id: create_release 
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}-gihub-generated
+        release_name: ${{ github.ref }}-github-generated
+        draft: false
+        prerelease: false
+    - name: saveResult
+      run: echo ${{ steps.create_release.outputs.upload_url }} > upload_url
+    - name: Upload result
+      uses: actions/upload-artifact@v1
+      with:
+        name: upload_url
+        path: upload_url
+
+
+  ###UPLOADING ARTIFACTS TO LINUX MERELY IF THE RELEASE HAS BEEN CREATED###
+
+
+  CreateAdnPushUnixExecutable:
+    name: CreateAdnPushUnixExecutable
+    needs: [CreateRelease]
+    strategy:
+      matrix:
+        go: [ 1.13]
+    runs-on: ubuntu-latest
+    #container: golang:${{ matrix.go }}-stretch Docker Compose is missing
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: go/src/github.com/gallo-cedrone/nri-elasticsearch
+    - name: Install dependencies
+      env:
+        GOPATH: /home/runner/work/nri-elasticsearch/go
+        GOBIN: /home/runner/work/nri-elasticsearch/go/bin
+      run: |
+        export PATH=$PATH:$GOBIN
+        sudo apt-get install rpm ruby ruby-dev rubygems build-essential
+        sudo gem install --no-document fpm
+        make clean validate test 
+        make package
+        ls -all -R
+    - name: Download upload_url 
+      uses: actions/download-artifact@v1
+      with:
+        name: upload_url
+    - name: Set output
+      id: vars
+      run: echo ::set-output name=upload_url::$(cat upload_url/upload_url)
+    - name: Upload Release Asset Binary
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.vars.outputs.upload_url }} 
+        asset_path: ./target/bin/linux_amd64/nri-elasticsearch
+        asset_name: nri-elasticsearch
+        asset_content_type: binary
+    - name: Upload Release Asset RPM
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.vars.outputs.upload_url }} 
+        asset_path: ./target/packages/rpm/nri-elasticsearch-0.0.0-dev.x86_64.rpm
+        asset_name: nri-elasticsearch-0.0.0-dev.x86_64.rpm
+        asset_content_type: rpm
+    - name: Upload Release Asset DEB
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.vars.outputs.upload_url }} 
+        asset_path: ./target/packages/deb/nri-elasticsearch_0.0.0-dev_amd64.deb
+        asset_name: nri-elasticsearch_0.0.0-dev_amd64.deb
+        asset_content_type: deb
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.vars.outputs.upload_url }} 
+        asset_path: ./target/packages/tarball/nri-elasticsearch_linux_0.0.0_amd64.tar.gz
+        asset_name: nri-elasticsearch_linux_0.0.0_amd64.tar.gz
+        asset_content_type: tar
+
+  ###UPLOADING ARTIFACTS TO WINDOWS MERELY IF THE RELEASE HAS BEEN CREATED###
+
+
+  CreateAdnPushWindowsExecutable:
+    name: CreateAdnPushWindowsExecutable
+    needs: [CreateRelease]
+    strategy:
+      matrix:
+        go: [1.13]
+    runs-on: windows-latest
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.13
+      id: go
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: go/src/github.com/gallo-cedrone/nri-elasticsearch
+    - name: Build and test
+      shell: bash
+      env: # Or as an environment variable
+        password_cert: ${{ secrets.certificate_encrypt_passphrase }}
+      run: |
+        choco install gnupg
+        export GOPATH=/d/a/nri-elasticsearch/go
+        export GOBIN=/d/a/nri-elasticsearch/go/bin
+        go build -v -o ./target/bin/windows_amd64/nri-elasticsearch.exe  ./src/
+        gpg --batch --yes --decrypt --passphrase="$password_cert" --output ./pkg/windows/nri-amd64-installer/mycert.pfx autosigned.pfx.gpg
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
+    - name: MSBuild
+      working-directory: ./pkg/windows/nri-amd64-installer/
+      run: | 
+        choco install -y windows-sdk-10.0
+        msbuild.exe -version
+        msbuild nri-installer.wixproj
+    - name: Download upload_url 
+      uses: actions/download-artifact@v1
+      with:
+        name: upload_url
+    - name: Set output
+      id: vars
+      run: |
+        type upload_url/upload_url
+        $output=(type upload_url/upload_url)
+        echo $output
+        Write-Output "::set-output name=upload_url::$output"
+    - name: Upload Windows executable
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.vars.outputs.upload_url }}
+        asset_path: ./target/bin/windows_amd64/nri-elasticsearch.exe
+        asset_name: nri-elasticsearch.exe
+        asset_content_type: Windows executable
+    - name: Upload Windows Installer
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.vars.outputs.upload_url }}
+        asset_path: ./pkg/windows/nri-amd64-installer/bin/Release/nri-elasticsearch-amd64.msi
+        asset_name: nri-elasticsearch-amd64.msi
+        asset_content_type: Windows Installer

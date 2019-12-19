@@ -8,7 +8,7 @@ In the event that a required notice is missing or incorrect, please notify us
 by e-mailing [open-source@newrelic.com](mailto:open-source@newrelic.com).
 
 For any licenses that require the disclosure of source code, the source code
-can be found at github.com/newrelic/nri-elasticsearch.
+can be found at github.com/gallo-cedrone/nri-elasticsearch.
 
 ## Contents
  

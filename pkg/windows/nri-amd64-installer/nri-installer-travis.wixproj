@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
+        <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+        <ProductVersion>3.10</ProductVersion>
+        <ProjectGuid>cf4185cc-55ff-40f3-91d8-3147c69530ef</ProjectGuid>
+        <SchemaVersion>2.0</SchemaVersion>
+        <OutputName>nri-elasticsearch-amd64</OutputName>
+        <OutputType>Package</OutputType>
+        <SignToolPath>C:\Program Files (x86)\Windows Kits\10\bin\x64\</SignToolPath> 
+        <Name>newrelic-nri-elasticsearch-installer</Name>
+        <DefineSolutionProperties>false</DefineSolutionProperties>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+        <DefineConstants>Debug;ProjectRootPath=..\..\..\;BinariesPath=..\..\..\target\bin\windows_amd64\</DefineConstants>
+        <SuppressAllWarnings>True</SuppressAllWarnings>
+        <Pedantic>False</Pedantic>
+        <CompilerAdditionalOptions>-arch x64</CompilerAdditionalOptions>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <IntermediateOutputPath>obj\$(Configuration)\</IntermediateOutputPath>
+        <DefineConstants>Debug;ProjectRootPath=..\..\..\;BinariesPath=..\..\..\target\bin\windows_amd64\</DefineConstants>
+        <CompilerAdditionalOptions>-arch x64</CompilerAdditionalOptions>
+    </PropertyGroup>
+    <ItemGroup>
+        <Compile Include="Product.wxs"/>
+    </ItemGroup>
+    <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
+    <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
+    <Target Name="SignInstaller">
+        <Exec Command="&quot;$(SignToolPath)signtool.exe&quot; sign /debug /v  /f &quot;.\mycert.pfx&quot; /d &quot;New Relic Infrastructure Agent, nri-elasticsearch&quot; /a &quot;$(OutputPath)$(OutputName).msi&quot;"/>
+        <!--<Copy SourceFiles="$(OutputPath)$(OutputName).msi" DestinationFiles="$(OutputPath)$(OutputName).x.y.z.msi"/>
+        <Delete Files="$(OutputPath)$(OutputName).msi" /> -->
+    </Target>
+    <Target Name="AfterBuild" DependsOnTargets="SignInstaller"/>
+</Project>
