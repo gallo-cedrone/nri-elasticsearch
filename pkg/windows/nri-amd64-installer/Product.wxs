@@ -1,11 +1,11 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
-    <?define Version = "{IntegrationVersion}" ?>
+    <?define Version = "1.0.0" ?>
     <?define ProductId = "*" ?>
     <?define UpgradeCode = "{59bf8deb-66d6-4a6f-a520-6cd60de9c399}" ?>
 
     <Product Id="$(var.ProductId)"
-             Name="New Relic Infrastructure Integration, nri-{IntegrationName}"
+             Name="New Relic Infrastructure Integration, nri-elasticsearch"
              Language="1033"
              Version="$(var.Version)"
              Manufacturer="New Relic, Inc."
@@ -16,13 +16,13 @@
                  InstallScope="perMachine"
                  Platform="x64"
                  Manufacturer="New Relic, Inc."
-                 Comments="(c) {Year} New Relic, Inc."
-                 Keywords="infrastructure,MSI,on-host,{IntegrationName}"/>
+                 Comments="(c) 2020 New Relic, Inc."
+                 Keywords="infrastructure,MSI,on-host,elasticsearch"/>
 
         <MajorUpgrade DowngradeErrorMessage="A newer version of [ProductName] is already installed."/>
         <MediaTemplate EmbedCab="yes"/>
 
-        <Feature Id="ProductFeature" Title="New Relic Infrastructure Integration, nri-{IntegrationName}" Level="1">
+        <Feature Id="ProductFeature" Title="New Relic Infrastructure Integration, nri-elasticsearch" Level="1">
             <ComponentRef Id="CMP_V1_PLUGIN_CONFIGS"/>
             <ComponentRef Id="CMP_V1_CUSTOM_PLUGINS"/>
             <ComponentRef Id="CMP_V1_CUSTOM_PLUGINS_BIN"/>
@@ -67,26 +67,26 @@
 
     <Fragment>
         <ComponentGroup Id="CustomPluginsBinComponent" Directory="CustomPluginsBinFolder">
-            <Component Id="CMP_NRI_{IntegrationName}_EXE" Guid="832ef605-2ed2-4a58-a2d0-d32652b2c326" Win64="yes">
-                <File Id="FILE_NRI_{IntegrationName}_EXE"
-                      Source="$(var.BinariesPath){IntegrationExe}"
+            <Component Id="CMP_NRI_elasticsearch_EXE" Guid="832ef605-2ed2-4a58-a2d0-d32652b2c326" Win64="yes">
+                <File Id="FILE_NRI_elasticsearch_EXE"
+                      Source="$(var.BinariesPath)nri-elasticsearch.exe"
                       KeyPath="yes"/>
             </Component>
         </ComponentGroup>
         <ComponentGroup Id="CustomPluginsComponent" Directory="CustomPluginsFolder">
-            <Component Id="CMP_NRI_{IntegrationName}_DEFINITION_YML" Guid="710063f8-0ea1-469c-8dde-a1130de9b1fd" Win64="yes">
-                <File Id="FILE_NRI_{IntegrationName}_DEFINITION_YML"
-                      Name="{IntegrationName}-definition.yml"
-                      Source="$(var.ProjectRootPath){IntegrationName}-win-definition.yml"
+            <Component Id="CMP_NRI_elasticsearch_DEFINITION_YML" Guid="710063f8-0ea1-469c-8dde-a1130de9b1fd" Win64="yes">
+                <File Id="FILE_NRI_elasticsearch_DEFINITION_YML"
+                      Name="elasticsearch-definition.yml"
+                      Source="$(var.ProjectRootPath)elasticsearch-win-definition.yml"
                       KeyPath="yes"/>
             </Component>
         </ComponentGroup>
         <ComponentGroup Id="PluginConfigsComponent" Directory="PluginConfigsFolder">
-            <Component Id="CMP_NRI_{IntegrationName}_CONFIG_YML" Guid="0851305b-d012-418d-b977-a9a2a1c508cc" Win64="yes"
+            <Component Id="CMP_NRI_elasticsearch_CONFIG_YML" Guid="0851305b-d012-418d-b977-a9a2a1c508cc" Win64="yes"
                        NeverOverwrite="yes" Permanent="yes">
-                <File Id="FILE_NRI_{IntegrationName}_CONFIG_YML"
-                      Name="{IntegrationName}-config.yml.sample"
-                      Source="$(var.ProjectRootPath){IntegrationName}-config.yml.sample"
+                <File Id="FILE_NRI_elasticsearch_CONFIG_YML"
+                      Name="elasticsearch-config.yml.sample"
+                      Source="$(var.ProjectRootPath)elasticsearch-config.yml.sample"
                       KeyPath="yes"/>
             </Component>
         </ComponentGroup>

@@ -35,7 +35,7 @@ deps: tools deps-only
 
 deps-only:
 	@echo "=== $(INTEGRATION) === [ deps ]: Installing package dependencies required by the project..."
-	@govendor sync
+	@govendor sync -v
 
 validate: deps
 	@echo "=== $(INTEGRATION) === [ validate ]: Validating source code running gometalinter..."
