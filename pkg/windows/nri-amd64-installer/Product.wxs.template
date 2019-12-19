@@ -69,7 +69,7 @@
         <ComponentGroup Id="CustomPluginsBinComponent" Directory="CustomPluginsBinFolder">
             <Component Id="CMP_NRI_{IntegrationName}_EXE" Guid="832ef605-2ed2-4a58-a2d0-d32652b2c326" Win64="yes">
                 <File Id="FILE_NRI_{IntegrationName}_EXE"
-                      Source="$(var.BinariesPath){IntegrationExe}"
+                      Source="$(var.BinariesPath)nri-{IntegrationExe}"
                       KeyPath="yes"/>
             </Component>
         </ComponentGroup>

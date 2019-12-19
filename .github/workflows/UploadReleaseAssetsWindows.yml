@@ -1,0 +1,71 @@
+name: UploadReleaseAssets
+on:
+  push:
+    branches:
+jobs:
+  CreateAdnPushWindowsExecutable:
+    name: CreateAdnPushWindowsExecutable
+    strategy:
+      matrix:
+        go: [ 1.13]
+        goarch: [ amd64 ]
+    runs-on: windows-latest
+    steps:
+    - name: Set up Go 1.13
+      uses: actions/setup-go@v1
+      with:
+        go-version: ${{ matrix.go }}
+      id: go
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+      with:
+        fetch-depth: 1
+        path: go/src/github.com/gallo-cedrone/${{ github.event.repository.name }}
+    - name: Find go main package and generate code
+      shell: pwsh
+      run: |
+        $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
+        go build ./...
+        go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+    - name: MSBuild
+      shell: pwsh
+      run: |
+        $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
+        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch ${{ matrix.goarch }} 
+    - name: Install needed tools
+      run: |
+        choco install gnupg
+        choco install -y windows-sdk-10.0 
+    - name: Setup MSBuild.exe
+      uses: warrenbuckley/Setup-MSBuild@v1
+    - name: Build the binaries
+      shell: bash
+      run: |
+        export password_cert=${{ secrets.certificate_encrypt_passphrase }}
+        export GOBIN=/d/a/${{ github.event.repository.name }}/go/bin
+        export GOPATH=/d/a/${{ github.event.repository.name }}/go
+        go build -v -o ./target/bin/windows_${{ matrix.goarch }}/${{ github.event.repository.name }}.exe  ./src/
+        gpg --batch --yes --decrypt --passphrase="$password_cert" --output ./mycert.pfx autosigned.pfx.gpg
+    - name: MSBuild
+      shell: pwsh
+      run: |
+        $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
+        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch ${{ matrix.goarch }} 
+    - name: Upload Windows executable 
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./target/bin/windows_${{ matrix.goarch }}/${{ github.event.repository.name }}.exe
+        asset_name: ${{ github.event.repository.name }}.exe
+        asset_content_type: Windows executable
+    - name: Upload Windows Installer
+      uses: actions/upload-release-asset@v1.0.1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ github.event.release.upload_url }}
+        asset_path: ./pkg/windows/nri-${{ matrix.goarch }}-installer/bin/Release/${{ github.event.repository.name }}-${{ matrix.goarch }}.msi
+        asset_name: ${{ github.event.repository.name }}-${{ matrix.goarch }}.msi
+        asset_content_type: Windows Installer
