@@ -49,6 +49,7 @@ jobs:
     - MSBUILD_PATH="c:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
     before_install:
     - choco install -y windows-sdk-10.0
+    - C:\ProgramData\chocolatey\logs\chocolatey.log
     before_script:
     - powershell Install-WindowsFeature Net-Framework-Core
     - cinst -y wixtoolset
