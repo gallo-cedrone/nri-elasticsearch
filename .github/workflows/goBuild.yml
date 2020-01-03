@@ -185,11 +185,15 @@ jobs:
         path: go/src/github.com/gallo-cedrone/nri-elasticsearch
     - name: Build and test
       shell: bash
+      env: # Or as an environment variable
+        password_cert: ${{ secrets.certificate_encrypt_passphrase }}
       run: |
-        pwd
         export GOPATH=/d/a/nri-elasticsearch/go
         export GOBIN=/d/a/nri-elasticsearch/go/bin
         go build -v -o ./target/bin/windows_amd64/nri-elasticsearch.exe  ./src/
+        choco install gnupg
+        env
+        gnupg --batch --yes --decrypt --passphrase="$password_cert" --output ./pkg/windows/nri-amd64-installer/mycert.pfx autosigned.pfx.gpg
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
     - name: MSBuild
