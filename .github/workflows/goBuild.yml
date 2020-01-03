@@ -1,8 +1,8 @@
 name: Go
 on: 
-  push: # Sequence of patterns matched against refs/tags
-    tags:
-    - '*'
+  push:
+#    tags:
+#    - '*'
 jobs:
   BuildAndTestWindows:
     name: BuildWindows
@@ -195,8 +195,8 @@ jobs:
     - name: MSBuild
       working-directory: ./pkg/windows/nri-amd64-installer/
       run: | 
+        choco install -y windows-sdk-10.0
         msbuild.exe -version
-        env
         msbuild nri-installer.wixproj
     - name: Download upload_url 
       uses: actions/download-artifact@v1

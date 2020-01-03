@@ -15,8 +15,6 @@ jobs:
   - os: windows
     script:
     - go test ./src/
-    on:
-        tags: true
 
 # CREATING THE RELEASES
   - stage: creating Realease
@@ -44,8 +42,7 @@ jobs:
       - "./target/packages/rpm/*.rpm"
       - "./target/packages/tarball/*.tar.gz"
       skip_cleanup: true
-      on:
-        tags: true
+
   - stage: creating Realease
     os: windows
     env:
@@ -53,6 +50,7 @@ jobs:
     before_script:
     - powershell Install-WindowsFeature Net-Framework-Core
     - cinst -y wixtoolset
+    - choco install -y windows-sdk-10.0
     script:
     - export PATH=$MSBUILD_PATH:$PATH
     - go build -v -o ./target/bin/windows_amd64/nri-elasticsearch.exe  ./src/
@@ -67,5 +65,5 @@ jobs:
       - "./target/bin/windows_amd64/nri-"
       - "./bin/Release/*"
       skip_cleanup: true
-      on:
-        tags: true
+#      on:
+#        tags: true
