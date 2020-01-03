@@ -193,7 +193,7 @@ jobs:
         go build -v -o ./target/bin/windows_amd64/nri-elasticsearch.exe  ./src/
         choco install gnupg
         env
-        gcp --batch --yes --decrypt --passphrase="$password_cert" --output ./pkg/windows/nri-amd64-installer/mycert.pfx autosigned.pfx.gpg
+        gpg --batch --yes --decrypt --passphrase="$password_cert" --output ./pkg/windows/nri-amd64-installer/mycert.pfx autosigned.pfx.gpg
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
     - name: MSBuild
