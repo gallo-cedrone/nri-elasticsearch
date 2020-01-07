@@ -55,7 +55,6 @@ jobs:
     - export PATH=$MSBUILD_PATH:$PATH
     - go build -v -o ./target/bin/windows_amd64/nri-elasticsearch.exe  ./src/
     - cd ./pkg/windows/nri-amd64-installer/ ; msbuild.exe ./nri-installer-travis.wixproj
-    - ls -R ../*
     deploy:
       provider: releases
       file_glob: true
