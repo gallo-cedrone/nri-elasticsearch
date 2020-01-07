@@ -51,9 +51,8 @@ jobs:
     - powershell Install-WindowsFeature Net-Framework-Core
     - cinst -y wixtoolset
     script:
-    - choco install -y windows-sdk-10.0 --debug --verbose
-    - type C:\ProgramData\chocolatey\logs\chocolatey.log
-    
+    #- choco install -y windows-sdk-10.0 --debug --verbose
+    #- type C:\ProgramData\chocolatey\logs\chocolatey.log
     - export PATH=$MSBUILD_PATH:$PATH
     - go build -v -o ./target/bin/windows_amd64/nri-elasticsearch.exe  ./src/
     - cd ./pkg/windows/nri-amd64-installer/ ; msbuild.exe ./nri-installer-travis.wixproj
