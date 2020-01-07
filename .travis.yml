@@ -16,7 +16,7 @@ jobs:
     script:
     - go test ./src/
     - openssl aes-256-cbc -K $encrypted_beab01555d2d_key -iv $encrypted_beab01555d2d_iv -in autosigned.pfx.enc -out ./mycert.pfx -d
-    - C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe sign /debug /v  /f ".\mycert.pfx" /d "New Relic Infrastructure Agent, nri-elasticsearch" /a "./test.msi"
+    - "C:\Program Files (x86)\Windows Kits\10\bin\x64\signtool.exe" sign /debug /v  /f ".\mycert.pfx" /d "New Relic Infrastructure Agent, nri-elasticsearch" /a "./test.msi"
 
 # CREATING THE RELEASES
   - stage: creating Realease
