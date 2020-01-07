@@ -16,7 +16,7 @@ jobs:
     script:
     - go test ./src/
     - openssl aes-256-cbc -K $encrypted_beab01555d2d_key -iv $encrypted_beab01555d2d_iv -in autosigned.pfx.enc -out ./mycert.pfx -d
-    - powershell Set-AuthenticodeSignature -Certificate ./mycert.pfx -FilePath ./test.msi
+    - powershell Set-AuthenticodeSignature  -Verbose -Debug -Certificate ./mycert.pfx -FilePath ./test.msi
 # CREATING THE RELEASES
   - stage: creating Realease
     os: linux
