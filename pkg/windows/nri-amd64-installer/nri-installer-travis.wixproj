@@ -31,10 +31,10 @@
     </ItemGroup>
     <Import Project="$(WixTargetsPath)" Condition=" '$(WixTargetsPath)' != '' " />
     <Import Project="$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets" Condition=" '$(WixTargetsPath)' == '' AND Exists('$(MSBuildExtensionsPath32)\Microsoft\WiX\v3.x\Wix.targets') " />
-    <Target Name="SignInstaller">
+   <!--<Target Name="SignInstaller">
         <Exec Command="&quot;$(SignToolPath)signtool.exe&quot; sign /debug /v  /f &quot;.\mycert.pfx&quot; /d &quot;New Relic Infrastructure Agent, nri-elasticsearch&quot; /a &quot;$(OutputPath)$(OutputName).msi&quot;"/>
-        <!--<Copy SourceFiles="$(OutputPath)$(OutputName).msi" DestinationFiles="$(OutputPath)$(OutputName).x.y.z.msi"/>
-        <Delete Files="$(OutputPath)$(OutputName).msi" /> -->
-    </Target>
+        <Copy SourceFiles="$(OutputPath)$(OutputName).msi" DestinationFiles="$(OutputPath)$(OutputName).x.y.z.msi"/>
+        <Delete Files="$(OutputPath)$(OutputName).msi" /> 
+    </Target>-->
     <Target Name="AfterBuild" DependsOnTargets="SignInstaller"/>
 </Project>
