@@ -10,8 +10,6 @@ jobs:
   - stage: testing Linux and Windows
     os: linux
     script: make clean validate test
-    on:
-      tags: true
   - os: windows
     script:
     - go test ./src/
@@ -41,7 +39,8 @@ jobs:
       - "./target/packages/rpm/*.rpm"
       - "./target/packages/tarball/*.tar.gz"
       skip_cleanup: true
-
+      on:
+        tags: true
   - stage: creating Realease
     os: windows
     env:
@@ -63,5 +62,5 @@ jobs:
       - "./target/bin/windows_amd64/nri-"
       - "./bin/Release/*"
       skip_cleanup: true
-#      on:
-#        tags: true
+      on:
+        tags: true
