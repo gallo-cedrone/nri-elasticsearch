@@ -27,19 +27,6 @@ jobs:
         choco install -y windows-sdk-10.0 
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
-    - name: Build the binaries
-      shell: bash
-      run: |
-        export password_cert=${{ secrets.certificate_encrypt_passphrase }}
-        export GOBIN=/d/a/${{ github.event.repository.name }}/go/bin
-        export GOPATH=/d/a/${{ github.event.repository.name }}/go
-        go build -v -o ./target/bin/windows_${{ matrix.goarch }}/${{ github.event.repository.name }}.exe  ./src/
-        gpg --batch --yes --decrypt --passphrase="$password_cert" --output ./mycert.pfx autosigned.pfx.gpg
-    - name: MSBuild
-      shell: pwsh
-      run: |
-        $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
-        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch ${{ matrix.goarch }} 
     - name: MSBuild
       shell: pwsh
       run: |
