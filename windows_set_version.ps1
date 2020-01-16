@@ -23,7 +23,9 @@ if ($wrong.Length  -ne 0) {
     echo "-version major, minor and patch must be valid positive integers (received: $version)"
     exit -1
 }
-
+$major = $v[0]
+$minor = $v[1]
+$patch = $v[2]
 $integrationName = $integration.Replace("nri-", "")
 $executable = "nri-$integrationName.exe"
 
