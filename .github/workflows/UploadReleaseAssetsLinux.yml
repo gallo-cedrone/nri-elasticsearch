@@ -1,4 +1,4 @@
-name: UploadReleaseAssets
+name: UploadReleaseAssetsLinux
 on:
   release:
     types:

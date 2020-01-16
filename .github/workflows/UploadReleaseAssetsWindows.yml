@@ -1,4 +1,4 @@
-name: UploadReleaseAssets
+name: UploadReleaseAssetsWindows
 on:
   release:
     types:
@@ -41,7 +41,7 @@ jobs:
         $env:path = "$env:path;$env:GOBIN"
         go build ./...
         go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
-        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.1.2 -arch ${{ matrix.goarch }} 
+        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version ${{ github.event.release.tag_name }} -arch ${{ matrix.goarch }} 
     - name: Upload Windows executable 
       uses: actions/upload-release-asset@v1.0.1
       env:
