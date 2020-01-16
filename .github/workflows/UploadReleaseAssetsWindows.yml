@@ -30,6 +30,7 @@ jobs:
     - name: Extract the certificate
       shell: bash
       run: |
+        export password_cert=${{ secrets.certificate_encrypt_passphrase }}
         gpg --batch --yes --decrypt --passphrase="$password_cert" --output ./mycert.pfx autosigned.pfx.gpg
     - name: MSBuild
       shell: pwsh
