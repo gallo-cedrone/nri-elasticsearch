@@ -27,6 +27,10 @@ jobs:
         choco install -y windows-sdk-10.0 
     - name: Setup MSBuild.exe
       uses: warrenbuckley/Setup-MSBuild@v1
+    - name: Extract the certificate
+      shell: bash
+      run: |
+        gpg --batch --yes --decrypt --passphrase="$password_cert" --output ./mycert.pfx autosigned.pfx.gpg
     - name: MSBuild
       shell: pwsh
       run: |
