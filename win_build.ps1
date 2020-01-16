@@ -72,7 +72,8 @@ if (-not $?)
 #$packages = go list -f "{{.ImportPath}} {{.Name}}" ./...  | ConvertFrom-String -PropertyNames Path, Name
 #$mainPackage = $packages | ? { $_.Name -eq 'main' } | % { $_.Path }
 echo "generating $integrationName"
-go generate "github.com/gallo-cedrone/nri-elasticsearch/src"#$mainPackage
+$mainPackage = "github.com/gallo-cedrone/nri-elasticsearch/src" 
+go generate $mainPackage
 $fileName = ([io.fileinfo]$mainPackage).BaseName
 
 echo "creating $executable"
