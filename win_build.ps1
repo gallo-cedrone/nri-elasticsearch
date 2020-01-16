@@ -18,7 +18,7 @@ param (
 $integrationName = $integration.Replace("nri-", "")
 $executable = "nri-$integrationName.exe"
 
-.\windows_set_version.ps1 -integration $integration -version
+.\windows_set_version.ps1 -integration $integration -version $version
 
 echo "--- Checking dependencies"
 
