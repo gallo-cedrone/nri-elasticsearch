@@ -25,8 +25,11 @@ jobs:
       shell: pwsh
       run: |
         $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
+        $env:GOBIN = "d:\a\${{ github.event.repository.name }}\go\bin"
+        $env:path = "$env:path;$env:GOBIN"
         go build ./...
         go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+        go generate "github.com/gallo-cedrone/nri-elasticsearch/src"
     - name: MSBuild
       shell: pwsh
       run: |
