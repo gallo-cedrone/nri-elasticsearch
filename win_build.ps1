@@ -21,7 +21,7 @@ $executable = "nri-$integrationName.exe"
 .\windows_set_version.ps1 -integration $integration -version $version
 Get-ChildItem -Recurse #debug
 echo "--- Checking dependencies" #debug
-type .\versioninfo.json #debug
+type .\src\versioninfo.json #debug
 echo "--- Checking dependencies"
 
 echo "Checking Go..."
