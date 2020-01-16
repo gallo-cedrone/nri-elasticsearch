@@ -1,7 +1,8 @@
 name: UploadReleaseAssets
 on:
-  push:
-    branches:
+  release:
+    types:
+      - created
 jobs:
   CreateAdnPushWindowsExecutable:
     name: CreateAdnPushWindowsExecutable
@@ -41,7 +42,6 @@ jobs:
         go build ./...
         go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
         .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.1.2 -arch ${{ matrix.goarch }} 
-        Get-ChildItem -Recurse #debug
     - name: Upload Windows executable 
       uses: actions/upload-release-asset@v1.0.1
       env:
@@ -57,6 +57,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: ${{ github.event.release.upload_url }}
-        asset_path: ./pkg/windows/nri-${{ matrix.goarch }}-installer/bin/Release/${{ github.event.repository.name }}-${{ matrix.goarch }}.msi
-        asset_name: ${{ github.event.repository.name }}-${{ matrix.goarch }}.msi
+        asset_path: ./pkg/windows/nri-${{ matrix.goarch }}-installer/bin/Release/${{ github.event.repository.name }}-${{ matrix.goarch }}.${{ github.event.release.tag_name }}.msi
+        asset_name: ${{ github.event.repository.name }}-${{ matrix.goarch }}.${{ github.event.release.tag_name }}.msi
         asset_content_type: Windows Installer
