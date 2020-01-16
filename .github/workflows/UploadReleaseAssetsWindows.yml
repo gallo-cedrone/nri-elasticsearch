@@ -21,16 +21,6 @@ jobs:
       with:
         fetch-depth: 1
         path: go/src/github.com/gallo-cedrone/${{ github.event.repository.name }}
-
-    - name: MSBuild
-      shell: pwsh
-      run: |
-        $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
-        $env:GOBIN = "d:\a\${{ github.event.repository.name }}\go\bin"
-        $env:path = "$env:path;$env:GOBIN"
-        go build ./...
-        go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
-        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch ${{ matrix.goarch }} 
     - name: Install needed tools
       run: |
         choco install gnupg
@@ -50,6 +40,16 @@ jobs:
       run: |
         $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
         .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch ${{ matrix.goarch }} 
+    - name: MSBuild
+      shell: pwsh
+      run: |
+        $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
+        $env:GOBIN = "d:\a\${{ github.event.repository.name }}\go\bin"
+        $env:path = "$env:path;$env:GOBIN"
+        go build ./...
+        go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
+        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch ${{ matrix.goarch }} 
+        Get-ChildItem -Recurse #debug
     - name: Upload Windows executable 
       uses: actions/upload-release-asset@v1.0.1
       env:

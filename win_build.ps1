@@ -68,11 +68,12 @@ if (-not $?)
     exit -1
 }
 
-#echo "--- Collecting Go main files"
+echo "--- Collecting Go main files"
 #$packages = go list -f "{{.ImportPath}} {{.Name}}" ./...  | ConvertFrom-String -PropertyNames Path, Name
 #$mainPackage = $packages | ? { $_.Name -eq 'main' } | % { $_.Path }
-echo "generating $integrationName"
 $mainPackage = "github.com/gallo-cedrone/nri-elasticsearch/src" 
+
+echo "generating $integrationName"
 go generate $mainPackage
 $fileName = ([io.fileinfo]$mainPackage).BaseName
 
