@@ -74,7 +74,7 @@ if (-not $?)
 }
 
 echo "--- Collecting Go main files"
-$packages = go list -f " {{.ImportPath}} = {{.Name}}" ./... | ConvertFrom-StringData go list -f "{{.Name}} = {{.ImportPath}} " ./...
+$packages = go list -f "{{.Name}} = {{.ImportPath}} " ./... | ConvertFrom-StringData 
 $mainPackage = $packages |  ? { $_.keys -eq "main" } | %{$_.values}
 echo "main package found: $mainPackage"
 
