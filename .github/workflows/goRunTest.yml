@@ -54,6 +54,6 @@ jobs:
       run: |
         export GOPATH=/d/a/${{ github.event.repository.name }}/go
         go test ./src/
-        gofmt -d -l ./...
+        go fmt ./...
         git diff
 
