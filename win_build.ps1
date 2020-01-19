@@ -15,8 +15,7 @@ param (
     [switch]$skipTests=$false
 )
 
-env #debug
-go env #debug
+go build -v ./testutils
 
 $integrationName = $integration.Replace("nri-", "")
 $executable = "nri-$integrationName.exe"
