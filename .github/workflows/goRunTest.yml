@@ -65,7 +65,7 @@ jobs:
         $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
         $env:GOBIN = "d:\a\${{ github.event.repository.name }}\go\bin"
         $env:path = "$env:path;$env:GOBIN"
-        go build ./...
+        $Host.Version
         go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
         .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch amd64
 
