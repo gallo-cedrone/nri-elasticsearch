@@ -44,6 +44,11 @@ jobs:
       with:
         go-version: ${{ matrix.go }}
       id: go
+    - name: Build and test
+      shell: bash
+      run: |
+        git config --system core.autocrlf false
+        git config --system core.eol lf
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
       with:
@@ -56,4 +61,6 @@ jobs:
         go test ./src/
         go fmt ./...
         git diff
+                
+
 
