@@ -68,7 +68,7 @@ jobs:
         env
         go env
         go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
-        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version ${{ github.event.release.tag_name }} -arch ${{ matrix.goarch }} 
+        .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version 0.0.0 -arch ${{ matrix.goarch }} 
 
 
                 
