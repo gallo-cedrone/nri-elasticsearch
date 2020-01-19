@@ -15,7 +15,8 @@ param (
     [switch]$skipTests=$false
 )
 
-go build -v ./testutils
+echo "debug testutils
+go build -v ./testutils#debug
 
 $integrationName = $integration.Replace("nri-", "")
 $executable = "nri-$integrationName.exe"
@@ -71,9 +72,10 @@ if (-not $?)
 }
 
 echo "--- Collecting Go main files"
-#$packages = go list -f "{{.ImportPath}} {{.Name}}" ./...  | ConvertFrom-String -PropertyNames Path, Name
-#$mainPackage = $packages | ? { $_.Name -eq 'main' } | % { $_.Path }
-$mainPackage = "github.com/gallo-cedrone/nri-elasticsearch/src" 
+$packages = go list -f "{{.ImportPath}} {{.Name}}" ./...  | ConvertFrom-String -PropertyNames Path, Name
+$mainPackage = $packages | ? { $_.Name -eq 'main' } | % { $_.Path }
+#$mainPackage = "github.com/gallo-cedrone/nri-elasticsearch/src" 
+echo "main package found: $mainPackage"
 
 echo "generating $integrationName"
 go generate $mainPackage
