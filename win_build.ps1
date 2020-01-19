@@ -16,7 +16,7 @@ param (
 )
 
 echo "debug testutils"
-go build -v ./testutils#debug
+go build -v ./testutils #debug
 
 $integrationName = $integration.Replace("nri-", "")
 $executable = "nri-$integrationName.exe"
