@@ -15,6 +15,9 @@ param (
     [switch]$skipTests=$false
 )
 
+env #debug
+go env #debug
+
 $integrationName = $integration.Replace("nri-", "")
 $executable = "nri-$integrationName.exe"
 
@@ -39,14 +42,14 @@ $goFiles = go list ./...
 
 echo "--- Format check"
 
-#$wrongFormat = go fmt $goFiles
+$wrongFormat = go fmt $goFiles
 
-#if ($wrongFormat -and ($wrongFormat.Length -gt 0))
-#{
-#    echo "ERROR: Wrong format for files:"
-#    echo $wrongFormat
-#    exit -1
-#}
+if ($wrongFormat -and ($wrongFormat.Length -gt 0))
+{
+    echo "ERROR: Wrong format for files:"
+    echo $wrongFormat
+    exit -1
+}
 
 if (-Not $skipTests) {
     echo "--- Running tests"
