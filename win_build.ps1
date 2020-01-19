@@ -15,8 +15,6 @@ param (
     [switch]$skipTests=$false
 )
 
-$Host.Version
-
 echo "debug testutils"
 go build -v ./src #debug
 
