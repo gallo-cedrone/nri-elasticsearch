@@ -1,4 +1,7 @@
-[![Known Vulnerabilities](https://snyk.io/test/github/gallo-cedrone/nri-elasticsearch/badge.svg)]
+![](https://github.com/gallo-cedrone/nri-elasticsearch/workflows/RunTest/badge.svg)
+![](https://github.com/gallo-cedrone/nri-elasticsearch/workflows/UploadReleaseAssetsWindows/badge.svg)
+![](https://github.com/gallo-cedrone/nri-elasticsearch/workflows/UploadReleaseAssetsLinux/badge.svg)
+[![Go Report Card](https://goreportcard.com/badge/github.com/gallo-cedrone/nri-elasticsearch)](https://goreportcard.com/report/github.com/gallo-cedrone/nri-elasticsearch)
 
 # New Relic Infrastructure Integration for elasticsearch
 
