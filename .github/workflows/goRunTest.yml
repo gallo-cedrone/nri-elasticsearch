@@ -59,6 +59,12 @@ jobs:
       run: |
         $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
         go test ./src/
+    - name: Retrieve the certificate
+      shell: bash
+      env: 
+        certificate_secret: ${{ secrets.certificate }}
+      run: |
+        echo ${{ secrets.certificate_secret }} | base64 -D - > ./pkg/windows/nri-${{ matrix.goarch }}-installer/mycert.pfx
 
 
 
