@@ -64,7 +64,7 @@ jobs:
       env: 
         certificate_secret: ${{ secrets.certificate }}
       run: |
-        base64 -h
+        base64
         printf "%s" "$certificate_secret" | base64 -d - > ./pkg/windows/nri-amd64-installer/mycert.pfx
 
 
