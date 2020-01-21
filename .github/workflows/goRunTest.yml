@@ -64,7 +64,7 @@ jobs:
       env: 
         certificate_secret: ${{ secrets.certificate }}
       run: |
-        echo ${{ secrets.certificate_secret }} | base64 -D - > ./pkg/windows/nri-${{ matrix.goarch }}-installer/mycert.pfx
+        echo $certificate_secret | base64 -D - > ./pkg/windows/nri-${{ matrix.goarch }}-installer/mycert.pfx
 
 
 
