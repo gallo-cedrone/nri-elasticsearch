@@ -42,7 +42,7 @@ jobs:
       run: |
         $env:GOPATH = "d:\a\${{ github.event.repository.name }}\go"
         $env:GOBIN = "d:\a\${{ github.event.repository.name }}\go\bin"
-        $env:path = "$env:path;$env:GOBIN;`"C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin`""
+        $env:path = "$env:path;$env:GOBIN;C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\MSBuild\Current\Bin"
         go build ./...
         go get github.com/josephspurrier/goversioninfo/cmd/goversioninfo
         .\win_build.ps1 -integration ${{ github.event.repository.name }} -installer -version ${{ github.event.release.tag_name }} -arch ${{ matrix.goarch }} 
